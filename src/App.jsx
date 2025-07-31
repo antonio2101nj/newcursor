@@ -7,6 +7,8 @@ import { Button } from './components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Settings, Users, LogOut } from 'lucide-react';
 import { supabase } from './lib/supabase';
+import { LanguageProvider } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -14,18 +16,13 @@ function App() {
   const [authMode, setAuthMode] = useState('login');
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true); // Adicionado estado de carregamento
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('useEffect: Iniciando verificação de autenticação...');
-
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('onAuthStateChange: Evento disparado:', event);
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
-        console.log('onAuthStateChange: Usuário autenticado, buscando perfil...');
-        // Fetch user role
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('role')
@@ -33,33 +30,27 @@ function App() {
           .single();
 
         if (error) {
-          console.error('onAuthStateChange: Erro ao buscar role do usuário:', error);
+          console.error('Erro ao buscar role do usuário:', error);
           setUserRole(null);
         } else if (profile) {
-          console.log('onAuthStateChange: Role do usuário encontrado:', profile.role);
           setUserRole(profile.role);
         }
       } else {
-        console.log('onAuthStateChange: Usuário desautenticado.');
         setIsAuthenticated(false);
         setUser(null);
         setUserRole(null);
-        setCurrentView('home'); // Reset view on logout
+        setCurrentView('home');
       }
-      console.log('onAuthStateChange: Finalizando carregamento.');
-      setLoading(false); // Finaliza o carregamento após a verificação de autenticação
+      setLoading(false);
     });
 
-    // Initial check
     supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-      console.log('getSession: Verificação inicial de sessão.');
       if (error) {
-        console.error('getSession: Erro ao obter sessão:', error);
+        console.error('Erro ao obter sessão:', error);
       }
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
-        console.log('getSession: Sessão encontrada, buscando perfil...');
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
@@ -67,15 +58,13 @@ function App() {
           .single();
 
         if (profileError) {
-          console.error('getSession: Erro ao buscar role do usuário:', profileError);
+          console.error('Erro ao buscar role do usuário:', profileError);
           setUserRole(null);
         } else if (profile) {
-          console.log('getSession: Role do usuário encontrado:', profile.role);
           setUserRole(profile.role);
         }
       }
-      console.log('getSession: Finalizando carregamento.');
-      setLoading(false); // Finaliza o carregamento após a verificação inicial
+      setLoading(false);
     });
 
     return () => {
@@ -84,7 +73,6 @@ function App() {
   }, []);
 
   const handleAuthSuccess = () => {
-    // onAuthStateChange will handle setting isAuthenticated and user/role
     setCurrentView('home');
   };
 
@@ -106,7 +94,7 @@ function App() {
 
   const renderMainApp = () => {
     if (loading) {
-      return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando...</div>; // Tela de carregamento
+      return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando...</div>;
     }
 
     if (currentView === 'admin') {
@@ -128,7 +116,7 @@ function App() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {userRole === 'admin' && (
-                <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentView('admin')}>
                   <CardHeader className="text-center">
                     <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                       <Settings className="w-8 h-8 text-green-600" />
@@ -146,7 +134,7 @@ function App() {
                 </Card>
               )}
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setCurrentView('user')}>
                 <CardHeader className="text-center">
                   <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                     <Users className="w-8 h-8 text-green-600" />

@@ -3,7 +3,11 @@ import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { ArrowLeft, ZoomIn, ZoomOut, RotateCw, Maximize, Download } from 'lucide-react'
 
+<<<<<<< HEAD
 function ContentViewer({ content, onClose }) {
+=======
+function ContentViewer({ content, onBack }) {
+>>>>>>> feature/improvements
   const [imageZoom, setImageZoom] = useState(100)
   const [imageRotation, setImageRotation] = useState(0)
 
@@ -149,7 +153,11 @@ function ContentViewer({ content, onClose }) {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center mb-6">
+<<<<<<< HEAD
           <Button variant="outline" onClick={onClose} className="mr-4">
+=======
+          <Button variant="outline" onClick={onBack} className="mr-4">
+>>>>>>> feature/improvements
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -193,4 +201,7 @@ function ContentViewer({ content, onClose }) {
 
 export default ContentViewer
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/improvements

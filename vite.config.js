@@ -5,12 +5,6 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(),tailwindcss()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
   server: {
     host: true,
     port: 5173,
@@ -22,11 +16,19 @@ export default defineConfig({
       usePolling: true,
     },
     allowedHosts: [
+      '.manusvm.computer',
+      '.manus.computer',
       '5173-it3qeffu1v4ksbtrbr25g-a54ddd3d.manus.computer',
       'localhost',
       '127.0.0.1'
     ]
-  }
+  },
+  plugins: [react(),tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 })
 
 
