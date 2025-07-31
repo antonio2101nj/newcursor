@@ -20,9 +20,12 @@ function App() {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('onAuthStateChange: Evento disparado:', event);
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
+        console.log('onAuthStateChange: Usuário autenticado, buscando perfil...');
+        // Fetch user role
         const { data: profile, error } = await supabase
           .from('profiles')
           .select('role')
@@ -30,27 +33,33 @@ function App() {
           .single();
 
         if (error) {
-          console.error('Erro ao buscar role do usuário:', error);
+          console.error('onAuthStateChange: Erro ao buscar role do usuário:', error);
           setUserRole(null);
         } else if (profile) {
+          console.log('onAuthStateChange: Role do usuário encontrado:', profile.role);
           setUserRole(profile.role);
         }
       } else {
+        console.log('onAuthStateChange: Usuário desautenticado.');
         setIsAuthenticated(false);
         setUser(null);
         setUserRole(null);
-        setCurrentView('home');
+        setCurrentView('home'); // Reset view on logout
       }
-      setLoading(false);
+      console.log('onAuthStateChange: Finalizando carregamento.');
+      setLoading(false); // Finaliza o carregamento após a verificação de autenticação
     });
 
+    // Initial check
     supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      console.log('getSession: Verificação inicial de sessão.');
       if (error) {
-        console.error('Erro ao obter sessão:', error);
+        console.error('getSession: Erro ao obter sessão:', error);
       }
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
+        console.log('getSession: Sessão encontrada, buscando perfil...');
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
@@ -58,13 +67,14 @@ function App() {
           .single();
 
         if (profileError) {
-          console.error('Erro ao buscar role do usuário:', profileError);
+          console.error("getSession: Erro ao buscar role do usuário:", profileError);
           setUserRole(null);
         } else if (profile) {
+          console.log("getSession: Role do usuário encontrado:", profile.role);
           setUserRole(profile.role);
         }
       }
-      setLoading(false);
+      setLoading(false); // Finaliza o carregamento após a verificação inicial
     });
 
     return () => {
@@ -73,6 +83,7 @@ function App() {
   }, []);
 
   const handleAuthSuccess = () => {
+    // onAuthStateChange will handle setting isAuthenticated and user/role
     setCurrentView('home');
   };
 
@@ -94,7 +105,7 @@ function App() {
 
   const renderMainApp = () => {
     if (loading) {
-      return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando...</div>;
+      return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando...</div>; // Tela de carregamento
     }
 
     if (currentView === 'admin') {
