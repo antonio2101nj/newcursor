@@ -9,37 +9,16 @@ import { LanguageProvider } from './contexts/LanguageContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 
 function App() {
-  const [currentView, setCurrentView] = useState('home')
-  const [isTransitioning, setIsTransitioning] = useState(false)
-
+  const [currentView, setCurrentView] = useState("home")
   const handleViewChange = (view) => {
-    setIsTransitioning(true)
-    setTimeout(() => {
-      setCurrentView(view)
-      setIsTransitioning(false)
-    }, 100)
+    setCurrentView(view)
   }
 
   const handleBackToHome = () => {
-    setIsTransitioning(true)
-    setTimeout(() => {
-      setCurrentView('home')
-      setIsTransitioning(false)
-    }, 100)
+    setCurrentView("home")
   }
 
   const renderView = () => {
-    if (isTransitioning) {
-      return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-            <p className="text-green-600">Carregando...</p>
-          </div>
-        </div>
-      )
-    }
-
     switch (currentView) {
       case 'admin':
         return <AdminPanel onBack={handleBackToHome} />
