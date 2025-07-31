@@ -11,4 +11,22 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+    hmr: {
+      clientPort: 443,
+    },
+    watch: {
+      usePolling: true,
+    },
+    allowedHosts: [
+      '5173-it3qeffu1v4ksbtrbr25g-a54ddd3d.manus.computer',
+      'localhost',
+      '127.0.0.1'
+    ]
+  }
 })
+
+

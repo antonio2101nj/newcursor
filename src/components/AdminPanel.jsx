@@ -5,7 +5,7 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { ArrowLeft, Upload, FileText, Image, Video, FileIcon, Trash2 } from 'lucide-react'
+import { ArrowLeft, Upload, FileText, Image, Video, FileIcon, Trash2, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 function AdminPanel({ onBack }) {
@@ -14,15 +14,40 @@ function AdminPanel({ onBack }) {
     description: '',
     type: '',
     textContent: '',
-    file: null
+    file: null,
+    isPremiumContent: false, // Novo campo
+    isLocked: false, // Novo campo
+    unlockDays: 0, // Novo campo
+    releaseDate: new Date().toISOString().split('T')[0] // Novo campo, data atual
   })
   const [isUploading, setIsUploading] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('')
   const [contents, setContents] = useState([])
+  const [userRole, setUserRole] = useState(null);
+  const [loadingRole, setLoadingRole] = useState(true);
 
   useEffect(() => {
-    loadContents()
-  }, [])
+    const fetchUserRole = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.error('Error fetching user role:', error);
+        } else if (profile) {
+          setUserRole(profile.role);
+        }
+      }
+      setLoadingRole(false);
+    };
+
+    fetchUserRole();
+    loadContents();
+  }, []);
 
   const loadContents = async () => {
     try {
@@ -91,6 +116,8 @@ function AdminPanel({ onBack }) {
         fileUrl = await uploadFile(formData.file)
       }
 
+      const { data: { user } } = await supabase.auth.getUser();
+
       // Inserir no banco de dados
       const { data, error } = await supabase
         .from('content')
@@ -100,7 +127,12 @@ function AdminPanel({ onBack }) {
             description: formData.description,
             type: formData.type,
             file_url: fileUrl,
-            text_content: formData.textContent || null
+            text_content: formData.textContent || null,
+            created_by: user ? user.id : null, // Adiciona o ID do usuário logado
+            is_premium: formData.isPremiumContent, // Novo campo
+            is_locked: formData.isLocked, // Novo campo
+            unlock_days: formData.isLocked ? parseInt(formData.unlockDays) : 0, // Novo campo
+            release_date: formData.releaseDate // Novo campo
           }
         ])
 
@@ -112,7 +144,11 @@ function AdminPanel({ onBack }) {
         description: '',
         type: '',
         textContent: '',
-        file: null
+        file: null,
+        isPremiumContent: false,
+        isLocked: false,
+        unlockDays: 0,
+        releaseDate: new Date().toISOString().split('T')[0]
       })
       
       // Limpar input de arquivo
@@ -157,15 +193,44 @@ function AdminPanel({ onBack }) {
     }
   }
 
+  if (loadingRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-green-600 text-lg">Carregando painel administrativo...</p>
+      </div>
+    );
+  }
+
+  if (userRole !== 'admin') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-800 p-4">
+        <h2 className="text-2xl font-bold mb-4">Acesso Negado</h2>
+        <p className="text-lg text-center">Você não tem permissão para acessar o painel administrativo.</p>
+        <Button variant="outline" onClick={onBack} className="mt-6">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Voltar para a tela inicial
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center mb-6">
-          <Button variant="outline" onClick={onBack} className="mr-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <Button variant="outline" onClick={onBack} className="mr-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar
+            </Button>
+            <h1 className="text-3xl font-bold text-green-800">Painel Administrativo</h1>
+          </div>
+          <Button
+            onClick={async () => { await supabase.auth.signOut(); onBack(); }}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            <LogOut className="mr-2 h-4 w-4" /> Sair
           </Button>
-          <h1 className="text-3xl font-bold text-green-800">Painel Administrativo</h1>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -250,6 +315,55 @@ function AdminPanel({ onBack }) {
                   </div>
                 )}
 
+                {/* Novos campos para controle de acesso e liberação */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isPremiumContent"
+                    checked={formData.isPremiumContent}
+                    onChange={(e) => handleInputChange('isPremiumContent', e.target.checked)}
+                    className="form-checkbox h-4 w-4 text-green-600"
+                  />
+                  <Label htmlFor="isPremiumContent">Conteúdo Premium</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isLocked"
+                    checked={formData.isLocked}
+                    onChange={(e) => handleInputChange('isLocked', e.target.checked)}
+                    className="form-checkbox h-4 w-4 text-green-600"
+                  />
+                  <Label htmlFor="isLocked">Conteúdo Bloqueado por Tempo</Label>
+                </div>
+
+                {formData.isLocked && (
+                  <div>
+                    <Label htmlFor="unlockDays">Dias para Desbloquear (a partir da criação)</Label>
+                    <Input
+                      id="unlockDays"
+                      type="number"
+                      value={formData.unlockDays}
+                      onChange={(e) => handleInputChange('unlockDays', e.target.value)}
+                      placeholder="Ex: 7 (dias)"
+                      min="0"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <Label htmlFor="releaseDate">Data de Lançamento</Label>
+                  <Input
+                    id="releaseDate"
+                    type="date"
+                    value={formData.releaseDate}
+                    onChange={(e) => handleInputChange('releaseDate', e.target.value)}
+                    required
+                  />
+                </div>
+
                 <Button 
                   type="submit" 
                   className="w-full bg-green-600 hover:bg-green-700"
@@ -320,4 +434,5 @@ function AdminPanel({ onBack }) {
 }
 
 export default AdminPanel
+
 
