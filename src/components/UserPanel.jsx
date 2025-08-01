@@ -75,7 +75,7 @@ function UserPanel({ onBack }) {
     };
 
     fetchUserAndContents();
-  }, [loadContents]); // Adicionar loadContents como dependência
+  }, []); // Remover loadContents das dependências para evitar loop infinito
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -273,5 +273,4 @@ function UserPanel({ onBack }) {
 }
 
 export default UserPanel
-
 
