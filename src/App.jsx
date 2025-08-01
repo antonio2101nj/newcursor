@@ -33,17 +33,19 @@ function App() {
         if (profileError) {
           console.error("Erro ao buscar role do usuário:", profileError);
           setUserRole(null);
+          setLoading(false); // Finaliza o carregamento mesmo se o perfil não for encontrado
         } else if (profile) {
           console.log("Role do usuário encontrado:", profile.role);
           setUserRole(profile.role);
+          setLoading(false); // Finaliza o carregamento após a verificação completa
         }
       } else {
         setIsAuthenticated(false);
         setUser(null);
         setUserRole(null);
-        setCurrentView('home'); // Reset view on logout
+        setCurrentView("home"); // Reset view on logout
+        setLoading(false); // Finaliza o carregamento também no logout
       }
-      setLoading(false); // Finaliza o carregamento após a verificação completa
     };
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
