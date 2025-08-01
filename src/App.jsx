@@ -43,7 +43,7 @@ function App() {
         setUserRole(null);
         setCurrentView('home'); // Reset view on logout
       }
-      setLoading(false); // Finaliza o carregamento após a verificação completa
+      // setLoading(false); // Removido daqui para ser chamado após a definição do userRole
     };
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -54,6 +54,7 @@ function App() {
       } else if (event === 'SIGNED_OUT') {
         await handleSession(null);
       }
+      setLoading(false); // Finaliza o carregamento após a verificação completa da sessão e role
     });
 
     // Initial check
@@ -63,6 +64,7 @@ function App() {
         console.error('getSession: Erro ao obter sessão:', error);
       }
       await handleSession(session);
+      setLoading(false); // Finaliza o carregamento após a verificação inicial
     });
 
     return () => {
