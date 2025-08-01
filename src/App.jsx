@@ -64,13 +64,19 @@ function App() {
         console.error('getSession: Erro ao obter sessão:', error);
       }
       await handleSession(session);
-      setLoading(false); // Finaliza o carregamento após a verificação inicial
+      // setLoading(false); // Removido daqui para ser chamado após a definição do userRole
     });
 
     return () => {
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (user !== null && userRole !== null) {
+      setLoading(false);
+    }
+  }, [user, userRole]);
 
   const handleAuthSuccess = () => {
     // onAuthStateChange will handle setting isAuthenticated and user/role
