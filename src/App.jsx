@@ -49,6 +49,7 @@ function App() {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('onAuthStateChange: Evento disparado:', event);
       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        setLoading(true); // Inicia o carregamento ao receber um evento de autenticação
         await handleSession(session);
       } else if (event === 'SIGNED_OUT') {
         await handleSession(null);
