@@ -29,6 +29,21 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  publicDir: 'public',
+  build: {
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        manifest: path.resolve(__dirname, 'public/manifest.json'),
+      },
+      output: {
+        entryFileNames: 'assets/[name].js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name].[ext]',
+      },
+    },
+  },
 })
 
 
