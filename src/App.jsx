@@ -100,6 +100,9 @@ function App() {
       return <AdminPanel user={user} userRole={userRole} onBack={() => setCurrentView('home')} />;
     } else if (user && user.user_metadata && userRole === 'user') {
       return <UserPanel user={user} userRole={userRole} onBack={() => setCurrentView('home')} />;
+    } else if (user && user.user_metadata && userRole === null) {
+      // Se o usuário está autenticado mas o userRole ainda não foi definido (pode acontecer em recargas rápidas)
+      return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando perfil...</div>;
     } else {
       return (
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center justify-center p-4">
