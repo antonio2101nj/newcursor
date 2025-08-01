@@ -19,35 +19,40 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('onAuthStateChange: Evento disparado:', event);
+    const handleSession = async (session) => {
       if (session) {
         setIsAuthenticated(true);
         setUser(session.user);
-        console.log('onAuthStateChange: Usuário autenticado, buscando perfil...');
-        // Fetch user role
-        const { data: profile, error } = await supabase
+        console.log('Sessão encontrada, buscando perfil...');
+        const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', session.user.id)
           .single();
 
-        if (error) {
-          console.error('onAuthStateChange: Erro ao buscar role do usuário:', error);
+        if (profileError) {
+          console.error("Erro ao buscar role do usuário:", profileError);
           setUserRole(null);
         } else if (profile) {
-          console.log('onAuthStateChange: Role do usuário encontrado:', profile.role);
+          console.log("Role do usuário encontrado:", profile.role);
           setUserRole(profile.role);
         }
       } else {
-        console.log('onAuthStateChange: Usuário desautenticado.');
         setIsAuthenticated(false);
         setUser(null);
         setUserRole(null);
         setCurrentView('home'); // Reset view on logout
       }
-      console.log('onAuthStateChange: Finalizando carregamento.');
-      setLoading(false); // Finaliza o carregamento após a verificação de autenticação
+      setLoading(false); // Finaliza o carregamento após a verificação completa
+    };
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('onAuthStateChange: Evento disparado:', event);
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        await handleSession(session);
+      } else if (event === 'SIGNED_OUT') {
+        await handleSession(null);
+      }
     });
 
     // Initial check
@@ -56,25 +61,7 @@ function App() {
       if (error) {
         console.error('getSession: Erro ao obter sessão:', error);
       }
-      if (session) {
-        setIsAuthenticated(true);
-        setUser(session.user);
-        console.log('getSession: Sessão encontrada, buscando perfil...');
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
-        if (profileError) {
-          console.error("getSession: Erro ao buscar role do usuário:", profileError);
-          setUserRole(null);
-        } else if (profile) {
-          console.log("getSession: Role do usuário encontrado:", profile.role);
-          setUserRole(profile.role);
-        }
-      }
-      setLoading(false); // Finaliza o carregamento após a verificação inicial
+      await handleSession(session);
     });
 
     return () => {
