@@ -3,11 +3,7 @@ import { Button } from './ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { ArrowLeft, ZoomIn, ZoomOut, RotateCw, Maximize, Download } from 'lucide-react'
 
-<<<<<<< HEAD
-function ContentViewer({ content, onClose }) {
-=======
-function ContentViewer({ content, onBack }) {
->>>>>>> feature/improvements
+function ContentViewer({ content, onClose, onBack }) {
   const [imageZoom, setImageZoom] = useState(100)
   const [imageRotation, setImageRotation] = useState(0)
 
@@ -74,7 +70,7 @@ function ContentViewer({ content, onBack }) {
                   }}
                   className="max-w-full h-auto"
                   onError={(e) => {
-                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY2NzM4NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbSBuYW8gZGlzcG9uaXZlbDwvdGV4dD4KPC9zdmc+'
+                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDMvMjAwMC9zdmciPgoJPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YzZjRmNiIvPgoJPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY2NzM4NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlbSBuYW8gZGlzcG9uaXZlbDwvdGV4dD4KPC9zdmc+'
                   }}
                 />
               </div>
@@ -153,11 +149,7 @@ function ContentViewer({ content, onBack }) {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center mb-6">
-<<<<<<< HEAD
-          <Button variant="outline" onClick={onClose} className="mr-4">
-=======
-          <Button variant="outline" onClick={onBack} className="mr-4">
->>>>>>> feature/improvements
+          <Button variant="outline" onClick={onClose || onBack} className="mr-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -201,7 +193,4 @@ function ContentViewer({ content, onBack }) {
 
 export default ContentViewer
 
-<<<<<<< HEAD
 
-=======
->>>>>>> feature/improvements
