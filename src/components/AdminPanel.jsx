@@ -5,14 +5,9 @@ import { Input } from './ui/input'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-<<<<<<< HEAD
 import { ArrowLeft, Upload, FileText, Image, Video, FileIcon, Trash2, LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-=======
-import { ArrowLeft, Upload, FileText, Image, Video, FileIcon, Trash2 } from 'lucide-react'
-import { supabase } from '../lib/supabase'
 import LogoutConfirmDialog from './LogoutConfirmDialog'
->>>>>>> feature/improvements
 
 function AdminPanel({ onBack }) {
   const [formData, setFormData] = useState({
@@ -20,20 +15,15 @@ function AdminPanel({ onBack }) {
     description: '',
     type: '',
     textContent: '',
-<<<<<<< HEAD
     file: null,
     isPremiumContent: false, // Novo campo
     isLocked: false, // Novo campo
     unlockDays: 0, // Novo campo
     releaseDate: new Date().toISOString().split('T')[0] // Novo campo, data atual
-=======
-    file: null
->>>>>>> feature/improvements
   })
   const [isUploading, setIsUploading] = useState(false)
   const [uploadMessage, setUploadMessage] = useState('')
   const [contents, setContents] = useState([])
-<<<<<<< HEAD
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
 
@@ -59,12 +49,6 @@ function AdminPanel({ onBack }) {
     fetchUserRole();
     loadContents();
   }, []);
-=======
-
-  useEffect(() => {
-    loadContents()
-  }, [])
->>>>>>> feature/improvements
 
   const loadContents = async () => {
     try {
@@ -133,11 +117,8 @@ function AdminPanel({ onBack }) {
         fileUrl = await uploadFile(formData.file)
       }
 
-<<<<<<< HEAD
       const { data: { user } } = await supabase.auth.getUser();
 
-=======
->>>>>>> feature/improvements
       // Inserir no banco de dados
       const { data, error } = await supabase
         .from('content')
@@ -147,16 +128,12 @@ function AdminPanel({ onBack }) {
             description: formData.description,
             type: formData.type,
             file_url: fileUrl,
-<<<<<<< HEAD
             text_content: formData.textContent || null,
             created_by: user ? user.id : null, // Adiciona o ID do usuário logado
             is_premium: formData.isPremiumContent, // Novo campo
             is_locked: formData.isLocked, // Novo campo
             unlock_days: formData.isLocked ? parseInt(formData.unlockDays) : 0, // Novo campo
             release_date: formData.releaseDate // Novo campo
-=======
-            text_content: formData.textContent || null
->>>>>>> feature/improvements
           }
         ])
 
@@ -168,15 +145,11 @@ function AdminPanel({ onBack }) {
         description: '',
         type: '',
         textContent: '',
-<<<<<<< HEAD
         file: null,
         isPremiumContent: false,
         isLocked: false,
         unlockDays: 0,
         releaseDate: new Date().toISOString().split('T')[0]
-=======
-        file: null
->>>>>>> feature/improvements
       })
       
       // Limpar input de arquivo
@@ -221,7 +194,6 @@ function AdminPanel({ onBack }) {
     }
   }
 
-<<<<<<< HEAD
   if (loadingRole) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -254,25 +226,13 @@ function AdminPanel({ onBack }) {
             </Button>
             <h1 className="text-3xl font-bold text-green-800">Painel Administrativo</h1>
           </div>
-          <Button
-            onClick={async () => { await supabase.auth.signOut(); onBack(); }}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            <LogOut className="mr-2 h-4 w-4" /> Sair
-          </Button>
-=======
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center mb-6">
           <LogoutConfirmDialog onConfirm={onBack}>
-            <Button variant="outline" className="mr-4">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
+            <Button
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              <LogOut className="mr-2 h-4 w-4" /> Sair
             </Button>
           </LogoutConfirmDialog>
-          <h1 className="text-3xl font-bold text-green-800">Painel Administrativo</h1>
->>>>>>> feature/improvements
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
@@ -357,7 +317,6 @@ function AdminPanel({ onBack }) {
                   </div>
                 )}
 
-<<<<<<< HEAD
                 {/* Novos campos para controle de acesso e liberação */}
                 <div className="flex items-center space-x-2">
                   <input
@@ -407,8 +366,6 @@ function AdminPanel({ onBack }) {
                   />
                 </div>
 
-=======
->>>>>>> feature/improvements
                 <Button 
                   type="submit" 
                   className="w-full bg-green-600 hover:bg-green-700"
@@ -480,7 +437,3 @@ function AdminPanel({ onBack }) {
 
 export default AdminPanel
 
-<<<<<<< HEAD
-
-=======
->>>>>>> feature/improvements
