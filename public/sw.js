@@ -8,7 +8,7 @@ const STATIC_ASSETS = [
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
-  '/src/main.jsx' // Adicionado o caminho correto para o main.jsx
+  '/assets/index.js' // Caminho correto para o arquivo JS principal após o build
 ]
 
 // URLs da API Supabase que devem ser cacheadas
@@ -197,6 +197,5 @@ self.addEventListener('notificationclick', event => {
     )
   }
 })
-
 
 
