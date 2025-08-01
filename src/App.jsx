@@ -43,7 +43,7 @@ function App() {
         setUserRole(null);
         setCurrentView('home'); // Reset view on logout
       }
-      // setLoading(false); // Removido daqui para ser chamado após a definição do userRole
+      setLoading(false); // Finaliza o carregamento após a verificação completa
     };
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -54,7 +54,7 @@ function App() {
       } else if (event === 'SIGNED_OUT') {
         await handleSession(null);
       }
-      setLoading(false); // Finaliza o carregamento após a verificação completa da sessão e role
+      // setLoading(false); // Removido daqui para ser chamado após a definição do userRole
     });
 
     // Initial check
