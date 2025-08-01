@@ -95,9 +95,10 @@ function App() {
       return <div className="min-h-screen flex items-center justify-center text-green-700 text-2xl">Carregando...</div>; // Tela de carregamento
     }
 
-    if (currentView === 'admin') {
+    // Adicionado verificação para user e user.user_metadata antes de acessar userRole
+    if (user && user.user_metadata && userRole === 'admin') {
       return <AdminPanel user={user} userRole={userRole} onBack={() => setCurrentView('home')} />;
-    } else if (currentView === 'user') {
+    } else if (user && user.user_metadata && userRole === 'user') {
       return <UserPanel user={user} userRole={userRole} onBack={() => setCurrentView('home')} />;
     } else {
       return (
