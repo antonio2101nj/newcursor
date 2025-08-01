@@ -182,7 +182,13 @@ function App() {
     }
   };
 
-  return isAuthenticated ? renderMainApp() : renderAuthForm();
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        {isAuthenticated ? renderMainApp() : renderAuthForm()}
+      </LanguageProvider>
+    </ThemeProvider>
+  );
 }
 
 export default App;
